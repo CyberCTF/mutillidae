@@ -1,0 +1,601 @@
+{
+  "generated_by_isoloom": "from isoloom.yml; don't edit: change the spec and run `isoloom generate` (`isoloom check` fails when this file is out of date)",
+  "resolved_version": 1,
+  "name": "mutillidae",
+  "instance": null,
+  "inputs": [],
+  "networks": {
+    "lab": {
+      "cidr": "10.60.4.0/24",
+      "docker_cidr": "10.60.4.0/24",
+      "internet": false,
+      "gateway": null,
+      "gateway_address": "10.60.4.1",
+      "router": null,
+      "controller": "10.60.4.253"
+    }
+  },
+  "reach": [],
+  "machines": {
+    "database": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.4.20"
+      },
+      "docker_addresses": {
+        "lab": "10.60.4.20"
+      },
+      "services": [
+        {
+          "port": 3306,
+          "name": "mariadb",
+          "http": false,
+          "publish": null
+        }
+      ],
+      "depends_on": [],
+      "inputs": [],
+      "volumes": {
+        "data": "/var/lib/mysql"
+      },
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 512,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    },
+    "directory": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.4.21"
+      },
+      "docker_addresses": {
+        "lab": "10.60.4.21"
+      },
+      "services": [
+        {
+          "port": 389,
+          "name": "ldap",
+          "http": false,
+          "publish": null
+        }
+      ],
+      "depends_on": [],
+      "inputs": [],
+      "volumes": {
+        "data": "/var/lib/ldap",
+        "config": "/etc/ldap/slapd.d"
+      },
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 256,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    },
+    "www": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.4.10"
+      },
+      "docker_addresses": {
+        "lab": "10.60.4.10"
+      },
+      "services": [
+        {
+          "port": 80,
+          "name": "web",
+          "http": true,
+          "publish": 80
+        },
+        {
+          "port": 443,
+          "name": "https",
+          "http": false,
+          "publish": 443
+        }
+      ],
+      "depends_on": [
+        "database",
+        "directory"
+      ],
+      "inputs": [],
+      "volumes": {},
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 512,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    },
+    "database-admin": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.4.11"
+      },
+      "docker_addresses": {
+        "lab": "10.60.4.11"
+      },
+      "services": [
+        {
+          "port": 80,
+          "name": "phpmyadmin",
+          "http": true,
+          "publish": 81
+        }
+      ],
+      "depends_on": [
+        "database"
+      ],
+      "inputs": [],
+      "volumes": {},
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 256,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    },
+    "directory-admin": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.4.12"
+      },
+      "docker_addresses": {
+        "lab": "10.60.4.12"
+      },
+      "services": [
+        {
+          "port": 80,
+          "name": "phpldapadmin",
+          "http": true,
+          "publish": 82
+        }
+      ],
+      "depends_on": [
+        "directory"
+      ],
+      "inputs": [],
+      "volumes": {},
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 256,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    }
+  },
+  "start_order": [
+    "database",
+    "directory",
+    "www",
+    "database-admin",
+    "directory-admin"
+  ],
+  "clones": {},
+  "tools": {},
+  "groups": {},
+  "router": null,
+  "controller": {
+    "addresses": {
+      "lab": "10.60.4.253"
+    }
+  },
+  "published": [
+    {
+      "machine": "www",
+      "port": 80,
+      "host_port": 80
+    },
+    {
+      "machine": "www",
+      "port": 443,
+      "host_port": 443
+    },
+    {
+      "machine": "database-admin",
+      "port": 80,
+      "host_port": 81
+    },
+    {
+      "machine": "directory-admin",
+      "port": 80,
+      "host_port": 82
+    }
+  ],
+  "targets": {
+    "possible": [
+      "docker",
+      "hosted",
+      "docker-vm",
+      "cloud-docker",
+      "kubernetes"
+    ],
+    "generated": [
+      "docker",
+      "hosted",
+      "docker-vm",
+      "cloud-docker",
+      "kubernetes"
+    ],
+    "refused": {},
+    "not_possible": {
+      "hybrid": "only when some machines are containers and others are VMs",
+      "vagrant": "needs `vm:` on database, directory, www, database-admin, directory-admin",
+      "proxmox": "needs `vm:` on database, directory, www, database-admin, directory-admin",
+      "cloud-vm": "needs `vm:` on database, directory, www, database-admin, directory-admin",
+      "external": "needs `external:` on database, directory, www, database-admin, directory-admin"
+    }
+  },
+  "checks": {
+    "default_position": "networks",
+    "positions": [
+      {
+        "position": "networks",
+        "machine": null,
+        "runner": "isoloom-check",
+        "checks": [
+          {
+            "name": "Mutillidae answers",
+            "derived": false,
+            "kind": "http",
+            "target": "http://www/",
+            "expect": "any",
+            "wait": 180
+          },
+          {
+            "name": "the database is built (the home page no longer redirects to the setup page)",
+            "derived": false,
+            "kind": "http",
+            "target": "http://www/index.php?page=home.php",
+            "expect": "200",
+            "wait": 120
+          },
+          {
+            "name": "the LDAP conference room lookup finds a room (the directory is loaded)",
+            "derived": false,
+            "kind": "script",
+            "target": "checks/ldap-lookup.sh",
+            "expect": "",
+            "wait": 120
+          },
+          {
+            "name": "phpMyAdmin answers",
+            "derived": false,
+            "kind": "http",
+            "target": "http://database-admin/",
+            "expect": "200",
+            "wait": 120
+          },
+          {
+            "name": "phpLDAPadmin answers",
+            "derived": false,
+            "kind": "http",
+            "target": "http://directory-admin/",
+            "expect": "200",
+            "wait": 120
+          }
+        ]
+      },
+      {
+        "position": "database",
+        "machine": "database",
+        "runner": "isoloom-check-database",
+        "checks": [
+          {
+            "name": "directory:389 from database",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.21:389",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "www:80 from database",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.10:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "www:443 from database",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.10:443",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "database-admin:80 from database",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.11:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "directory-admin:80 from database",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.12:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "no internet from database",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      },
+      {
+        "position": "directory",
+        "machine": "directory",
+        "runner": "isoloom-check-directory",
+        "checks": [
+          {
+            "name": "database:3306 from directory",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.20:3306",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "www:80 from directory",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.10:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "www:443 from directory",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.10:443",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "database-admin:80 from directory",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.11:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "directory-admin:80 from directory",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.12:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "no internet from directory",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      },
+      {
+        "position": "www",
+        "machine": "www",
+        "runner": "isoloom-check-www",
+        "checks": [
+          {
+            "name": "database:3306 from www",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.20:3306",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "directory:389 from www",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.21:389",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "database-admin:80 from www",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.11:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "directory-admin:80 from www",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.12:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "no internet from www",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      },
+      {
+        "position": "database-admin",
+        "machine": "database-admin",
+        "runner": "isoloom-check-database-admin",
+        "checks": [
+          {
+            "name": "database:3306 from database-admin",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.20:3306",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "directory:389 from database-admin",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.21:389",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "www:80 from database-admin",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.10:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "www:443 from database-admin",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.10:443",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "directory-admin:80 from database-admin",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.12:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "no internet from database-admin",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      },
+      {
+        "position": "directory-admin",
+        "machine": "directory-admin",
+        "runner": "isoloom-check-directory-admin",
+        "checks": [
+          {
+            "name": "database:3306 from directory-admin",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.20:3306",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "directory:389 from directory-admin",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.21:389",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "www:80 from directory-admin",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.10:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "www:443 from directory-admin",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.4.10:443",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "database-admin:80 from directory-admin",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.4.11:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "no internet from directory-admin",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      }
+    ]
+  },
+  "message": "Mutillidae answers at http://localhost:80/ (HTTPS on\n443). The database and the LDAP directory are already loaded.\nphpMyAdmin: http://localhost:81/ (root /\nmutillidae); phpLDAPadmin: http://localhost:82/\n(cn=admin,dc=mutillidae,dc=localhost / mutillidae). Turn the hints on from the menu bar.\n"
+}

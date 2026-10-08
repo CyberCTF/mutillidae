@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=https://www.isoloom.com/schema/v1.json
+# OWASP Mutillidae II (by Jeremy Druin, webpwnized) as an Isoloom spec: the application
+# (webpwnized/mutillidae, vendored unchanged in build/www/app/) and its container setup
+# (webpwnized/mutillidae-docker, vendored unchanged in build/www/docker/), the five upstream
+# containers: the web server, MariaDB, OpenLDAP, phpMyAdmin and phpLDAPadmin, with the images
+# pinned. The web server builds the database and loads the directory at first start.
+# `isoloom generate`, then `isoloom up docker`.
+version: 1
+name: mutillidae
+
+networks:
+  lab: { cidr: 10.60.4.0/24, internet: false }
+
+machines:
+  database:
+    networks: { lab: 20 }
+    services: [{ port: 3306, name: mariadb }]
+    resources: { cpus: 1, memory_mb: 512 }
+    volumes: { data: /var/lib/mysql }
+    docker:
+      build: build/database
+
+  directory:
+    networks: { lab: 21 }
+    services: [{ port: 389, name: ldap }]
+    resources: { cpus: 1, memory_mb: 256 }
+    volumes: { data: /var/lib/ldap, config: /etc/ldap/slapd.d }
+    docker:
+      build: build/directory
+
+  www:
+    networks: { lab: 10 }
+    services:
+      - { port: 80, name: web, http: true, publish: 80 }
+      - { port: 443, name: https, publish: 443 }
+    resources: { cpus: 1, memory_mb: 512 }
+    depends_on: [database, directory]
+    docker:
+      build: build/www
+
+  database-admin:
+    networks: { lab: 11 }
+    services: [{ port: 80, name: phpmyadmin, http: true, publish: 81 }]
+    resources: { cpus: 1, memory_mb: 256 }
+    depends_on: [database]
+    docker:
+      build: build/database-admin
+
+  directory-admin:
+    networks: { lab: 12 }
+    services: [{ port: 80, name: phpldapadmin, http: true, publish: 82 }]
+    resources: { cpus: 1, memory_mb: 256 }
+    depends_on: [directory]
+    docker:
+      build: build/directory-admin
+
+checks:
+  - name: Mutillidae answers
+    http: http://www/
+    expect: any
+    wait: 180
+  - name: the database is built (the home page no longer redirects to the setup page)
+    http: http://www/index.php?page=home.php
+    expect: 200
+    wait: 120
+  - name: the LDAP conference room lookup finds a room (the directory is loaded)
+    script: checks/ldap-lookup.sh
+    wait: 120
+  - name: phpMyAdmin answers
+    http: http://database-admin/
+    wait: 120
+  - name: phpLDAPadmin answers
+    http: http://directory-admin/
+    wait: 120
+
+message: |
+  Mutillidae answers at http://localhost:{{ machines.www.services.0.publish }}/ (HTTPS on
+  {{ machines.www.services.1.publish }}). The database and the LDAP directory are already loaded.
+  phpMyAdmin: http://localhost:{{ machines.database-admin.services.0.publish }}/ (root /
+  mutillidae); phpLDAPadmin: http://localhost:{{ machines.directory-admin.services.0.publish }}/
+  (cn=admin,dc=mutillidae,dc=localhost / mutillidae). Turn the hints on from the menu bar.

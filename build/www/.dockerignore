@@ -1,0 +1,5 @@
+app/.github/
+app/.tools/
+docker/.github/
+docker/.tools/
+Dockerfile
