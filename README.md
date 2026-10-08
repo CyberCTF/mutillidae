@@ -21,7 +21,7 @@ the LDAP directory loaded at first start.
 
 ```bash
 isoloom generate
-isoloom up docker
+isoloom run docker
 ```
 
 Then open http://mutillidae.localhost/ (or http://localhost/). phpMyAdmin is on
