@@ -4,6 +4,5 @@
   "question": "Exploit the Mutillidae vulnerabilities listed in the OWASP 2017 menu.",
   "category": "WEB",
   "difficulty": 2,
-  "evidence_kind": "SECRET",
-  "capabilities": ["sql-injection", "cross-site-scripting", "ldap-injection", "command-injection", "file-inclusion", "xxe"]
+  "evidence_kind": "SECRET"
 }
