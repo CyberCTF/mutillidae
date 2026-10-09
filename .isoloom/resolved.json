@@ -275,7 +275,8 @@
       "vagrant": "needs `vm:` on database, directory, www, database-admin, directory-admin",
       "proxmox": "needs `vm:` on database, directory, www, database-admin, directory-admin",
       "cloud-vm": "needs `vm:` on database, directory, www, database-admin, directory-admin",
-      "external": "needs `external:` on database, directory, www, database-admin, directory-admin"
+      "external": "needs `external:` on database, directory, www, database-admin, directory-admin",
+      "cloud-services": "left out by `targets:`"
     }
   },
   "checks": {

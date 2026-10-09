@@ -9,6 +9,9 @@ services:
   database:
     build:
       context: ../../build/database
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: mutillidae
     image: isoloom/mutillidae-database
     platform: linux/amd64
     hostname: database
@@ -39,6 +42,8 @@ services:
           memory: 512M
     labels:
       isoloom.service.mariadb: tcp:3306
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
     restart: unless-stopped
   database-routes:
     image: alpine:3.20
@@ -60,9 +65,15 @@ services:
       database:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   directory:
     build:
       context: ../../build/directory
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: mutillidae
     image: isoloom/mutillidae-directory
     platform: linux/amd64
     hostname: directory
@@ -94,6 +105,8 @@ services:
           memory: 256M
     labels:
       isoloom.service.ldap: tcp:389
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
     restart: unless-stopped
   directory-routes:
     image: alpine:3.20
@@ -115,9 +128,15 @@ services:
       directory:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   www:
     build:
       context: ../../build/www
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: mutillidae
     image: isoloom/mutillidae-www
     platform: linux/amd64
     hostname: www
@@ -159,6 +178,8 @@ services:
     labels:
       isoloom.service.web: http:80
       isoloom.service.https: tcp:443
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
     restart: unless-stopped
   www-routes:
     image: alpine:3.20
@@ -180,9 +201,15 @@ services:
       www:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   database-admin:
     build:
       context: ../../build/database-admin
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: mutillidae
     image: isoloom/mutillidae-database-admin
     platform: linux/amd64
     hostname: database-admin
@@ -218,6 +245,8 @@ services:
           memory: 256M
     labels:
       isoloom.service.phpmyadmin: http:80
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
     restart: unless-stopped
   database-admin-routes:
     image: alpine:3.20
@@ -239,9 +268,15 @@ services:
       database-admin:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   directory-admin:
     build:
       context: ../../build/directory-admin
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: mutillidae
     image: isoloom/mutillidae-directory-admin
     platform: linux/amd64
     hostname: directory-admin
@@ -277,6 +312,8 @@ services:
           memory: 256M
     labels:
       isoloom.service.phpldapadmin: http:80
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
     restart: unless-stopped
   directory-admin-routes:
     image: alpine:3.20
@@ -298,6 +335,9 @@ services:
       directory-admin:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   isoloom-check:
     image: curlimages/curl:8.11.1
     profiles:
@@ -335,6 +375,9 @@ services:
         condition: service_healthy
       directory-admin-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   isoloom-check-database:
     image: curlimages/curl:8.11.1
     profiles:
@@ -366,6 +409,9 @@ services:
         condition: service_healthy
       directory-admin-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   isoloom-check-directory:
     image: curlimages/curl:8.11.1
     profiles:
@@ -397,6 +443,9 @@ services:
         condition: service_healthy
       directory-admin-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   isoloom-check-www:
     image: curlimages/curl:8.11.1
     profiles:
@@ -428,6 +477,9 @@ services:
         condition: service_healthy
       directory-admin-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   isoloom-check-database-admin:
     image: curlimages/curl:8.11.1
     profiles:
@@ -459,6 +511,9 @@ services:
         condition: service_healthy
       directory-admin-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   isoloom-check-directory-admin:
     image: curlimages/curl:8.11.1
     profiles:
@@ -490,6 +545,9 @@ services:
         condition: service_healthy
       directory-admin-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
   isoloom-probe-amd64:
     image: busybox:1.37.0-musl
     platform: linux/amd64
@@ -501,14 +559,32 @@ services:
     - isoloom-probe-amd64:/probe
     network_mode: none
     restart: no
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
 networks:
   lab:
     ipam:
       config:
       - subnet: 10.60.4.0/24
         gateway: 10.60.4.1
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
 volumes:
-  database-data: {}
-  directory-data: {}
-  directory-config: {}
-  isoloom-probe-amd64: {}
+  database-data:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
+  directory-data:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
+  directory-config:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
+  isoloom-probe-amd64:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
