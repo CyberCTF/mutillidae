@@ -3,7 +3,9 @@
   "resolved_version": 1,
   "name": "mutillidae",
   "instance": null,
-  "inputs": [],
+  "inputs": [
+    "CTF_FLAG_MAIN"
+  ],
   "networks": {
     "lab": {
       "cidr": "10.60.4.0/24",
@@ -127,8 +129,12 @@
         "database",
         "directory"
       ],
-      "inputs": [],
-      "volumes": {},
+      "inputs": [
+        "CTF_FLAG_MAIN"
+      ],
+      "volumes": {
+        "ctf": "/ctf"
+      },
       "resources": {
         "cpus": 1,
         "memory_mb": 512,

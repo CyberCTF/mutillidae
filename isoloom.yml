@@ -8,6 +8,9 @@
 version: 1
 name: mutillidae
 
+# Given by the CyberCTF launcher: this player's flag. Without it the development flag.
+inputs: [CTF_FLAG_MAIN]
+
 networks:
   lab: { cidr: 10.60.4.0/24, internet: false }
 
@@ -35,8 +38,11 @@ machines:
       - { port: 443, name: https, publish: 443 }
     resources: { cpus: 1, memory_mb: 512 }
     depends_on: [database, directory]
+    inputs: [CTF_FLAG_MAIN]
+    volumes: { ctf: /ctf }   # the flag, written by ctf/flag.sh at every start
     docker:
       build: build/www
+      init: [ctf/flag.sh]
 
   database-admin:
     networks: { lab: 11 }

@@ -143,9 +143,14 @@ services:
     networks:
       lab:
         ipv4_address: 10.60.4.10
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
     ports:
     - ${ISOLOOM_PUBLISH_ADDRESS:-127.0.0.1}:${ISOLOOM_PUBLISH_FIXED:+80}:80
     - ${ISOLOOM_PUBLISH_ADDRESS:-127.0.0.1}:${ISOLOOM_PUBLISH_FIXED:+443}:443
+    volumes:
+    - www-ctf:/ctf
+    - isoloom-probe-amd64:/.isoloom-probe:ro
     healthcheck:
       test:
       - CMD
@@ -157,8 +162,6 @@ services:
       timeout: 3s
       retries: 60
       start_period: 10s
-    volumes:
-    - isoloom-probe-amd64:/.isoloom-probe:ro
     depends_on:
       isoloom-probe-amd64:
         condition: service_completed_successfully
@@ -201,6 +204,26 @@ services:
       www:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
+  www-init-1:
+    image: isoloom/mutillidae-www
+    entrypoint:
+    - /bin/sh
+    - /isoloom/init/flag.sh
+    volumes:
+    - ../../ctf/flag.sh:/isoloom/init/flag.sh:ro
+    - www-ctf:/ctf
+    network_mode: service:www
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
+    depends_on:
+      www:
+        condition: service_healthy
+      www-routes:
+        condition: service_healthy
+    restart: no
     labels:
       isoloom.managed: 'true'
       isoloom.environment: mutillidae
@@ -365,6 +388,8 @@ services:
         condition: service_healthy
       www:
         condition: service_healthy
+      www-init-1:
+        condition: service_completed_successfully
       www-routes:
         condition: service_healthy
       database-admin:
@@ -399,6 +424,8 @@ services:
         condition: service_healthy
       www:
         condition: service_healthy
+      www-init-1:
+        condition: service_completed_successfully
       www-routes:
         condition: service_healthy
       database-admin:
@@ -433,6 +460,8 @@ services:
         condition: service_healthy
       www:
         condition: service_healthy
+      www-init-1:
+        condition: service_completed_successfully
       www-routes:
         condition: service_healthy
       database-admin:
@@ -467,6 +496,8 @@ services:
         condition: service_healthy
       www:
         condition: service_healthy
+      www-init-1:
+        condition: service_completed_successfully
       www-routes:
         condition: service_healthy
       database-admin:
@@ -501,6 +532,8 @@ services:
         condition: service_healthy
       www:
         condition: service_healthy
+      www-init-1:
+        condition: service_completed_successfully
       www-routes:
         condition: service_healthy
       database-admin:
@@ -535,6 +568,8 @@ services:
         condition: service_healthy
       www:
         condition: service_healthy
+      www-init-1:
+        condition: service_completed_successfully
       www-routes:
         condition: service_healthy
       database-admin:
@@ -581,6 +616,10 @@ volumes:
       isoloom.managed: 'true'
       isoloom.environment: mutillidae
   directory-config:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: mutillidae
+  www-ctf:
     labels:
       isoloom.managed: 'true'
       isoloom.environment: mutillidae

@@ -1,0 +1,35 @@
+{
+  "objectives": [
+    {
+      "key": "main",
+      "title": "Read the flag",
+      "prompt": "Find the Mutillidae page that runs an operating system command with your input, use it to run a command on the web server, and read /ctf/flag.",
+      "check": { "evidence": "SECRET", "format": "FLAG{%s}" },
+      "dev": "FLAG{dev-mutillidae}",
+      "hints": [
+        "Look in the OWASP 2017 menu under Injection: one page looks up a host name for you.",
+        "At security level 0 the page passes the host name straight to a shell command. Which vulnerability class is that?"
+      ],
+      "steps": [
+        {
+          "key": "page",
+          "title": "Find the page",
+          "prompt": "Which Mutillidae page resolves a host name by running a system tool? (its file name)",
+          "check": { "answer": ["dns-lookup.php", "dns-lookup", "dns lookup"] }
+        },
+        {
+          "key": "parameter",
+          "title": "Find the input",
+          "prompt": "Which form parameter carries the host name to the command?",
+          "check": { "answer": ["target_host"] }
+        },
+        {
+          "key": "class",
+          "title": "Name the flaw",
+          "prompt": "Which vulnerability class lets your input run a command of your own on the server?",
+          "check": { "answer": ["command injection", "os command injection", "shell injection"] }
+        }
+      ]
+    }
+  ]
+}
