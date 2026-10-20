@@ -63,7 +63,7 @@ machines:
       phpmyadmin:
         port: 80
         protocol: http
-        publish: true
+        publish: 8081
     app:
       build: build/database-admin
   directory-admin:
@@ -74,7 +74,7 @@ machines:
       phpldapadmin:
         port: 80
         protocol: http
-        publish: true
+        publish: 8082
     app:
       build: build/directory-admin
 checks:
