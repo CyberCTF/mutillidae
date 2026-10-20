@@ -1,8 +1,11 @@
 {
+  "project_name": "cyberlabs-mutillidae",
+  "slug": "mutillidae",
   "title": "OWASP Mutillidae II",
   "description": "A deliberately vulnerable PHP web application with more than 40 vulnerabilities and challenges covering the OWASP Top Ten, backed by MariaDB and OpenLDAP, with phpMyAdmin and phpLDAPadmin alongside. Each page has hints and several security levels.",
-  "question": "Use the DNS lookup page's command injection to run a command on the web server and read /ctf/flag.",
-  "category": "WEB",
+  "category": "web",
   "difficulty": 2,
-  "evidence_kind": "SECRET"
+  "evidence_kind": "SECRET",
+  "capabilities": [],
+  "question": "Use the DNS lookup page's command injection to run a command on the web server and read /ctf/flag."
 }

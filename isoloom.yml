@@ -9,57 +9,74 @@ version: 1
 name: mutillidae
 
 # Given by the CyberCTF launcher: this player's flag. Without it the development flag.
-inputs: [CTF_FLAG_MAIN]
+inputs:
+  CTF_FLAG_MAIN: {}
 
 networks:
-  lab: { cidr: 10.60.4.0/24, internet: false }
+  lab: {cidr: 10.60.4.0/24, internet: false}
 
 machines:
   database:
-    networks: { lab: 20 }
-    services: [{ port: 3306, name: mariadb }]
-    resources: { cpus: 1, memory_mb: 512 }
-    volumes: { data: /var/lib/mysql }
-    docker:
+    networks: {lab: 20}
+    resources: {cpus: 1, memory_mb: 512}
+    volumes: {data: /var/lib/mysql}
+    ports:
+      mariadb:
+        port: 3306
+    app:
       build: build/database
-
   directory:
-    networks: { lab: 21 }
-    services: [{ port: 389, name: ldap }]
-    resources: { cpus: 1, memory_mb: 256 }
-    volumes: { data: /var/lib/ldap, config: /etc/ldap/slapd.d }
-    docker:
+    networks: {lab: 21}
+    resources: {cpus: 1, memory_mb: 256}
+    volumes: {data: /var/lib/ldap, config: /etc/ldap/slapd.d}
+    ports:
+      ldap:
+        port: 389
+    app:
       build: build/directory
-
   www:
-    networks: { lab: 10 }
-    services:
-      - { port: 80, name: web, http: true, publish: 80 }
-      - { port: 443, name: https, publish: 443 }
-    resources: { cpus: 1, memory_mb: 512 }
+    networks: {lab: 10}
+    resources: {cpus: 1, memory_mb: 512}
     depends_on: [database, directory]
-    inputs: [CTF_FLAG_MAIN]
-    volumes: { ctf: /ctf }   # the flag, written by ctf/flag.sh at every start
-    docker:
+    volumes: {ctf: /ctf}     # the flag, written by ctf/flag.sh at every start
+    ports:
+      web:
+        port: 80
+        protocol: http
+        publish: true
+      https:
+        port: 443
+        publish: true
+    files:
+      - path: /run/lab/ctf_flag_main
+        input: CTF_FLAG_MAIN
+    setup:
+      - ctf/flag.sh
+    app:
       build: build/www
-      init: [ctf/flag.sh]
 
   database-admin:
-    networks: { lab: 11 }
-    services: [{ port: 80, name: phpmyadmin, http: true, publish: 81 }]
-    resources: { cpus: 1, memory_mb: 256 }
+    networks: {lab: 11}
+    resources: {cpus: 1, memory_mb: 256}
     depends_on: [database]
-    docker:
+    ports:
+      phpmyadmin:
+        port: 80
+        protocol: http
+        publish: true
+    app:
       build: build/database-admin
-
   directory-admin:
-    networks: { lab: 12 }
-    services: [{ port: 80, name: phpldapadmin, http: true, publish: 82 }]
-    resources: { cpus: 1, memory_mb: 256 }
+    networks: {lab: 12}
+    resources: {cpus: 1, memory_mb: 256}
     depends_on: [directory]
-    docker:
+    ports:
+      phpldapadmin:
+        port: 80
+        protocol: http
+        publish: true
+    app:
       build: build/directory-admin
-
 checks:
   - name: Mutillidae answers
     http: http://www/
@@ -80,8 +97,8 @@ checks:
     wait: 120
 
 message: |
-  Mutillidae answers at http://localhost:{{ machines.www.services.0.publish }}/ (HTTPS on
-  {{ machines.www.services.1.publish }}). The database and the LDAP directory are already loaded.
-  phpMyAdmin: http://localhost:{{ machines.database-admin.services.0.publish }}/ (root /
-  mutillidae); phpLDAPadmin: http://localhost:{{ machines.directory-admin.services.0.publish }}/
+  Mutillidae answers at {{ machines.www.ports.web.url }} (HTTPS on
+  {{ machines.www.ports.https.published }}). The database and the LDAP directory are already loaded.
+  phpMyAdmin: {{ machines.database-admin.ports.phpmyadmin.url }} (root /
+  mutillidae); phpLDAPadmin: {{ machines.directory-admin.ports.phpldapadmin.url }}
   (cn=admin,dc=mutillidae,dc=localhost / mutillidae). Turn the hints on from the menu bar.
